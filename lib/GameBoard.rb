@@ -1,7 +1,9 @@
 require_relative 'Player'
 
 class GameBoard
-  attr_accessor :board, :current_player
+  LINES = [[1,2,3],[4,5,6],[7,8,9],[1,4,7],[2,5,8],[3,6,9],[1,5,9],[3,5,7]]
+
+  attr_accessor :board
   def initialize
     # Board is represented by a one-dimensional array. Index 0 not used.
     @board = Array.new(10)
@@ -22,6 +24,10 @@ class GameBoard
     puts rows_for_display.join("\n" + row_separator + "\n")
   end
 
+  def get_free_positions
+    (1..9).select{|pos| @board[pos].nil?}
+  end
+
   def play
     player_X = Player.new('X', self)
     player_O = Player.new('O', self)
@@ -30,11 +36,27 @@ class GameBoard
     self.print_board
     loop do
       @current_player.select_position
+      if win?(current_player)
+        puts "\nPlayer #{current_player.player_id} wins!!!"
+        break
+      elsif get_free_positions.empty?
+        puts "\nDraw!!!"
+        break
+      end
       @current_player = @current_player.player_id == 'X' ? player_O : player_X
     end
   end
 
-  def get_free_positions
-    (1..9).select{|pos| @board[pos].nil?}
+  private
+
+  attr_accessor :current_player
+
+  def win?(player)
+    LINES.each do |line|
+      if line.difference(player.player_positions).empty?
+        return true
+      end
+    end
+    return false
   end
 end

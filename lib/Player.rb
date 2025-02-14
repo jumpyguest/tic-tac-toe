@@ -8,12 +8,11 @@ class Player
 
   def update_position(position)
     @player_positions.push(position)
-    p @player_positions
   end
 
   def select_position
     while !@game_board.get_free_positions.empty? do
-      print "Player #{self.player_id} Enter your position: "
+      print "\nPlayer #{self.player_id} Enter your position: "
       position = gets.chomp.to_i
       if position == 0 || position > 9 || @game_board.board[position] != nil
         puts "Unavailable position. Please try again."
